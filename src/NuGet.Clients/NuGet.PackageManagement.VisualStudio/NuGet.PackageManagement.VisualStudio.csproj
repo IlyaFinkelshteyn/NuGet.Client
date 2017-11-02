@@ -310,6 +310,17 @@
       <Version>7.0.5000</Version>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="NuGet.Build.Tasks.Pack">
+      <Version>4.4.0</Version>
+    </PackageReference>
+  </ItemGroup>
+
+  <PropertyGroup>
+    <NuspecFile>NuGet.PackageManagement.VisualStudio.nuspec</NuspecFile>
+    <NuspecProperties>version=$(Version);configuration=$(Configuration)</NuspecProperties>
+    <NuspecBasePath>$(OutputPath)</NuspecBasePath>
+  </PropertyGroup>
   <Import Project="$(BuildCommonDirectory)common.targets" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

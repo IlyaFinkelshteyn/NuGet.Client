@@ -4,6 +4,9 @@
   <PropertyGroup>
     <TargetFramework>net46</TargetFramework>
     <OutputType>Library</OutputType>
+    <PackProject>true</PackProject>
+    <IsPackable>true</IsPackable>
+    <NoBuild>true</NoBuild>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\NuGet.Clients\NuGet.PackageManagement.UI\NuGet.PackageManagement.UI.csproj" />
