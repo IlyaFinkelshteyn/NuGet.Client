@@ -54,7 +54,7 @@ namespace NuGet.PackageManagement.VisualStudio
             var itemsFactory = ServiceLocator.GetInstance<IVsEnumHierarchyItemsFactory>();
 
             // Verify ReferenceOutputAssembly
-            var excludedProjects = GetExcludedReferences(itemsFactory);
+            var excludedProjects = GetExcludedReferences(itemsFactory, logger);
             var hasMissingReferences = false;
 
             // find all references in the project
@@ -65,12 +65,11 @@ namespace NuGet.PackageManagement.VisualStudio
                     var reference3 = childReference as Reference3;
 
                     // Verify that this is a project reference
-                    if (reference3 != null && reference3.SourceProject != null)
+                    if (IsProjectReference(reference3, logger))
                     {
-                        // Check that it is valid and resolved
-                        if (!reference3.Resolved)
+                        // Verify that this is a valid and resolved project reference
+                        if (!IsReferenceResolved(reference3, logger))
                         {
-                            // Skip missing references and show a warning
                             hasMissingReferences = true;
                             continue;
                         }
@@ -95,6 +94,10 @@ namespace NuGet.PackageManagement.VisualStudio
 
                             results.Add(restoreReference);
                         }
+                    }
+                    else
+                    {
+                        hasMissingReferences = true;
                     }
                 }
                 catch (Exception ex)
@@ -140,7 +143,8 @@ namespace NuGet.PackageManagement.VisualStudio
         /// Get the unique names of all references which have ReferenceOutputAssembly set to false.
         /// </summary>
         private IList<string> GetExcludedReferences(
-            IVsEnumHierarchyItemsFactory itemsFactory)
+            IVsEnumHierarchyItemsFactory itemsFactory,
+            Common.ILogger logger)
         {
             _threadingService.ThrowIfNotOnUIThread();
 
@@ -188,7 +192,7 @@ namespace NuGet.PackageManagement.VisualStudio
                                 // 3. Follow the reference to the DTE project and get the unique name
                                 var reference = childObject as Reference3;
 
-                                if (reference != null && reference.SourceProject != null && reference.Resolved)
+                                if (IsProjectReference(reference, logger) && IsReferenceResolved(reference, logger))
                                 {
                                     var childPath = EnvDTEProjectInfoUtility
                                         .GetFullProjectPath(reference.SourceProject);
@@ -202,6 +206,40 @@ namespace NuGet.PackageManagement.VisualStudio
             }
 
             return excludedReferences;
+        }
+
+        private bool IsProjectReference(Reference3 reference, Common.ILogger logger)
+        {
+            _threadingService.ThrowIfNotOnUIThread();
+
+            try
+            {
+                // Verify that this is a project reference
+                return reference != null && reference.SourceProject != null;
+            }
+            catch (Exception ex)
+            {
+                logger.LogDebug(ex.ToString());
+            }
+
+            return false;
+        }
+
+        private bool IsReferenceResolved(Reference3 reference, Common.ILogger logger)
+        {
+            _threadingService.ThrowIfNotOnUIThread();
+
+            try
+            {
+                // Verify that this is a valid and resolved reference
+                return reference != null && reference.Resolved;
+            }
+            catch (Exception ex)
+            {
+                logger.LogDebug(ex.ToString());
+            }
+
+            return false;
         }
 
         public Task<IEnumerable<LibraryDependency>> GetPackageReferencesAsync(
