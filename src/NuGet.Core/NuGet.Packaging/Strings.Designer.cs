@@ -440,6 +440,15 @@ namespace NuGet.Packaging {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The following certificate cannot be used for package signing as the private key provider is unsupported - {0}.
+        /// </summary>
+        internal static string SignFailureCertificateInvalidProviderType {
+            get {
+                return ResourceManager.GetString("SignFailureCertificateInvalidProviderType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to String argument &apos;{0}&apos; cannot be null or empty.
         /// </summary>
         internal static string StringCannotBeNullOrEmpty {

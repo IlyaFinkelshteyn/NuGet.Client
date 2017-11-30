@@ -225,6 +225,11 @@ namespace NuGet.Common
         NU3012 = 3012,
 
         /// <summary>
+        /// Certifiate has a CNG private key
+        /// </summary>
+        NU3013 = 3013,
+
+        /// <summary>
         /// Invalid timestamp response
         /// </summary>
         NU3021 = 3021,

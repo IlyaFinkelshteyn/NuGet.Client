@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -312,5 +312,13 @@ Valid from:</comment>
   </data>
   <data name="ErrorPackageSignatureInvalid" xml:space="preserve">
     <value>Package signature is invalid.</value>
+  </data>
+  <data name="SignFailureCertificateInvalidProviderType" xml:space="preserve">
+    <value>The following certificate cannot be used for package signing as the private key provider is unsupported - {0}</value>
+    <comment>0 -  X509Certificate2 details in the following format -
+Subject Name:
+SHA1 hash:
+Issued by:
+Valid from:</comment>
   </data>
 </root>

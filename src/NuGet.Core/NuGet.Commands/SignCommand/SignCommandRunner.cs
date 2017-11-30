@@ -92,16 +92,7 @@ namespace NuGet.Commands
         /// <param name="cert">Certificate to be validated</param>
         private static void ValidateCertificate(X509Certificate2 cert)
         {
-            //if (SigningUtility.CertificateHasCngPrivateKey(cert))
-            //{
-            //    // The private key is CNG
-            //    // This is currently not supported by SignedCms.ComputeSignature
-            //    throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture,
-            //        "The following certificate cannot be used for signing a package as it contains a CNG private key - {0}",
-            //        $"{Environment.NewLine}{CertificateUtility.X509Certificate2ToString(cert)}"));
-            //}
-
-            if (SigningUtility.CertificateContainsEku(cert, Oids.CodeSigningEkuOid))
+            if (!SigningUtility.CertificateContainsEku(cert, Oids.CodeSigningEkuOid))
             {
                 throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture,
                     "The following certificate cannot be used for signing a package as it does not have Code Signing enhanced key usage - {0}",
@@ -118,17 +109,10 @@ namespace NuGet.Commands
         {
             var result = true;
 
-            if (SigningUtility.CertificateContainsEku(cert, Oids.CodeSigningEkuOid))
+            if (!SigningUtility.CertificateContainsEku(cert, Oids.CodeSigningEkuOid))
             {
                 result = false;
             }
-
-            //if (SigningUtility.CertificateHasCngPrivateKey(cert))
-            //{
-            //    // The private key is CNG
-            //    // This is currently not supported by SignedCms.ComputeSignature
-            //    result = false;
-            //}
 
             return result;
         }

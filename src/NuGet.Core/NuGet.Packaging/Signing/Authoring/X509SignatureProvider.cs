@@ -7,6 +7,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 using NuGet.Common;
+using System.Globalization;
 
 #if IS_DESKTOP
 using System.Security.Cryptography.Pkcs;
@@ -19,6 +20,10 @@ namespace NuGet.Packaging.Signing
     /// </summary>
     public class X509SignatureProvider : ISignatureProvider
     {
+        // Occurs when SignedCms.ComputeSignature cannot read a CNG  private key
+        // "Invalid provider type specified." (INVALID_PROVIDER_TYPE)
+        private const int INVALID_PROVIDER_TYPE_HRESULT = unchecked((int)0x80090014);
+
         private readonly ITimestampProvider _timestampProvider;
 
         public X509SignatureProvider(ITimestampProvider timestampProvider)
@@ -73,7 +78,24 @@ namespace NuGet.Packaging.Signing
             cmsSigner.IncludeOption = X509IncludeOption.WholeChain;
 
             var cms = new SignedCms(contentInfo);
-            cms.ComputeSignature(cmsSigner);
+
+            try
+            {
+                cms.ComputeSignature(cmsSigner);
+            }
+            catch (CryptographicException ex)
+            {
+                switch (ex.HResult)
+                {
+                    case INVALID_PROVIDER_TYPE_HRESULT:
+                        throw new SignatureException(NuGetLogCode.NU3013,
+                            string.Format(CultureInfo.CurrentCulture,
+                            Strings.SignFailureCertificateInvalidProviderType,
+                            $"{Environment.NewLine}{CertificateUtility.X509Certificate2ToString(cert)}"));
+                    default:
+                        throw ex;
+                }
+            }
 
             return Task.FromResult(Signature.Load(cms));
         }
