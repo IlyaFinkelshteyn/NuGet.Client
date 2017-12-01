@@ -139,7 +139,6 @@ namespace NuGet.Packaging.Signing
                 {
                     var attributeSize = Marshal.SizeOf(typeof(CRYPT_ATTRIBUTE));
                     var blobSize = Marshal.SizeOf(typeof(CRYPT_INTEGER_BLOB_INTPTR));
-
                     var attributesArray = (CRYPT_ATTRIBUTE*)hb.Alloc(attributeSize * attributes.Count);
                     var attributeIndex = attributesArray;
 
@@ -158,6 +157,7 @@ namespace NuGet.Packaging.Signing
                             if (attrData.Length > 0)
                             {
                                 var rawData = hb.Alloc(value.RawData.Length);
+
                                 // Assign data to datablob
                                 dataBlob->cbData = (uint)attrData.Length;
                                 dataBlob->pbData = rawData;
@@ -165,11 +165,9 @@ namespace NuGet.Packaging.Signing
                                 Marshal.Copy(attrData, 0, rawData, attrData.Length);
                             }
                         }
-
-                        //Update attribute index
+                        // Update attribute index
                         attributeIndex++;
                     }
-
                     signerInfo.rgAuthAttr = new IntPtr(attributesArray);
                 }
             }
