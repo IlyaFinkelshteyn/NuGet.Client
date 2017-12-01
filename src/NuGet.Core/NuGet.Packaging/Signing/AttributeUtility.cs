@@ -5,7 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
+#if IS_DESKTOP
 using System.Security.Cryptography.Pkcs;
+#endif
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using NuGet.Packaging.Signing.DerEncoding;
@@ -138,7 +140,6 @@ namespace NuGet.Packaging.Signing
                 oid: new Oid(Oids.SigningCertificateV2),
                 values: new AsnEncodedDataCollection(null));
         }
-    }
-
 #endif
+    }
 }
