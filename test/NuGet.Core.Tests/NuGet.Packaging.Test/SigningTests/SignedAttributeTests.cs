@@ -27,6 +27,37 @@ namespace NuGet.Packaging.Test
     public class SignedAttributeTests
     {
         [Fact]
+        public void SignedAttribute_CommitmentTypeIndicationWithAuthorSignature()
+        {
+            var attribute = AttributeUtility.GetCommitmentTypeIndication(SignatureType.Author);
+            AttributeUtility.GetCommitmentTypeIndication(attribute).Should().Be(SignatureType.Author);
+        }
+
+        [Fact]
+        public void SignedAttribute_CommitmentTypeIndicationWithRepositorySignature()
+        {
+            var attribute = AttributeUtility.GetCommitmentTypeIndication(SignatureType.Repository);
+            AttributeUtility.GetCommitmentTypeIndication(attribute).Should().Be(SignatureType.Repository);
+        }
+
+        [Fact]
+        public void SignedAttribute_IsSameCertificate()
+        {
+            var cert = TestCertificate.Generate();
+            var attribute = AttributeUtility.GetSigningCertificateV2(cert.PublicCert);
+            AttributeUtility.IsSameCertificate(cert.PublicCert, attribute).Should().BeTrue();
+        }
+
+        [Fact]
+        public void SignedAttribute_GetSigningCertificateV2_VerifySerial()
+        {
+            var cert = TestCertificate.Generate();
+            var attribute = AttributeUtility.GetSigningCertificateV2(cert.PublicCert);
+
+            AttributeUtility.GetSerialNumber(attribute).Should().Be(cert.PublicCert.SerialNumber);
+        }
+
+        [Fact]
         public async Task SignedAttribute_Test()
         {
             using (var testCert = TestCertificate.Generate().WithTrust())

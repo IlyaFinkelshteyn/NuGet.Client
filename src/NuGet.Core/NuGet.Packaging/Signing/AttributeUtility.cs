@@ -34,7 +34,7 @@ namespace NuGet.Packaging.Signing
                     valueOid = Oids.CommitmentTypeIdentifierProofOfOrigin;
                     break;
                 case SignatureType.Repository:
-                    valueOid = Oids.CommitmentTypeIdentifierProofOfOrigin;
+                    valueOid = Oids.CommitmentTypeIdentifierProofOfReceipt;
                     break;
                 default:
                     throw new ArgumentException(nameof(type));
@@ -63,9 +63,11 @@ namespace NuGet.Packaging.Signing
 
             if (StringComparer.Ordinal.Equals(attribute.Oid.Value, Oids.CommitmentTypeIndication))
             {
-                foreach (var value in attribute.Values)
+                var reader = new DerSequenceReader(attribute.Values.ToList().Single().RawData);
+
+                while (reader.HasData)
                 {
-                    values.Add(GetSignatureType(value.Oid.Value));
+                    values.Add(GetSignatureType(reader.ReadOidAsString()));
                 }
             }
 
@@ -167,18 +169,30 @@ namespace NuGet.Packaging.Signing
 
         public static bool IsSameCertificate(X509Certificate2 cert, CryptographicAttributeObject certAttribute)
         {
-            var essCertIDv2 = certAttribute.Values.ToList();
+            var reader = new DerSequenceReader(certAttribute.Values.ToList().Single().RawData);
 
-            if (essCertIDv2.Count > 1)
+            var hashAlgorithm = CryptoHashUtility.OidToHashAlgorithmName(reader.ReadOidAsString());
+            var attributeHashValue = reader.ReadOctetString();
+            var hashValue = GetCertificateHash(cert, hashAlgorithm);
+
+            return hashValue.SequenceEqual(attributeHashValue);
+        }
+
+        public static string GetSerialNumber(CryptographicAttributeObject certAttribute)
+        {
+            var reader = new DerSequenceReader(certAttribute.Values.ToList().Single().RawData);
+
+            reader.SkipValue();
+            reader.SkipValue();
+
+            if (reader.HasData)
             {
-                var hashAlgorithm = CryptoHashUtility.OidToHashAlgorithmName(essCertIDv2[0].Oid.Value);
-                var hashValue = GetCertificateHash(cert, hashAlgorithm);
-                var attributeHashValue = essCertIDv2[0].RawData;
-
-                return hashValue.SequenceEqual(attributeHashValue);
+                // TODO: skip previous values
+                var issuer = reader.ReadSequence();
+                return BitConverter.ToString(issuer.ReadIntegerBytes()).Replace("-", string.Empty);
             }
 
-            return false;
+            return null;
         }
 
         private static List<AsnEncodedData> ToList(this AsnEncodedDataCollection collection)
