@@ -124,6 +124,20 @@ namespace NuGet.Packaging.Signing
                     throw new ArgumentException(nameof(signatureType));
             }
         }
+
+        /// <summary>
+        /// signing-certificate-v2
+        /// </summary>
+        public static CryptographicAttributeObject GetSigningCertificateV2()
+        {
+
+
+
+            // Create an attribute
+            return new CryptographicAttributeObject(
+                oid: new Oid(Oids.SigningCertificateV2),
+                values: new AsnEncodedDataCollection(null));
+        }
     }
 
 #endif
