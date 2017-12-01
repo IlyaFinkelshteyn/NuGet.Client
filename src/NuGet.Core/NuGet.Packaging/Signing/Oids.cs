@@ -46,5 +46,7 @@ namespace NuGet.Packaging.Signing
 
         // RFC 5126 "signing-certificate-v2" https://tools.ietf.org/html/rfc5126.html#page-34
         public const string SigningCertificateV2 = "1.2.840.113549.1.9.16.2.47";
+
+
     }
 }

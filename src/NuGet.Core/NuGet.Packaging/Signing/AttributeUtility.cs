@@ -10,6 +10,7 @@ using System.Security.Cryptography.Pkcs;
 #endif
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using NuGet.Common;
 using NuGet.Packaging.Signing.DerEncoding;
 
 namespace NuGet.Packaging.Signing
@@ -130,15 +131,89 @@ namespace NuGet.Packaging.Signing
         /// <summary>
         /// signing-certificate-v2
         /// </summary>
-        public static CryptographicAttributeObject GetSigningCertificateV2()
+        public static CryptographicAttributeObject GetSigningCertificateV2(X509Certificate2 cert)
         {
+            var hashAlgorithm = Common.HashAlgorithmName.SHA512;
 
+            var hashAlgorithmOid = hashAlgorithm.ConvertToOidString();
+            var hashValue = GetCertificateHash(cert, hashAlgorithm);
+            var serialBytes = GetSerialNumberBytes(cert.SerialNumber);
 
+            var issuerSerial = new List<byte[][]>()
+            {
+                // GeneralNames
+
+                // CertificateSerialNumber
+                DerEncoder.SegmentedEncodeUnsignedInteger(serialBytes)
+            };
+
+            var essCertIDv2 = new List<byte[][]>()
+            {
+                // AlgorithmIdentifier
+                DerEncoder.SegmentedEncodeOid(hashAlgorithmOid),
+                // Hash
+                DerEncoder.SegmentedEncodeOctetString(hashValue),
+                // IssuerSerial
+                DerEncoder.ConstructSegmentedSequence(issuerSerial)
+            };
+
+            var data = new AsnEncodedData(Oids.SigningCertificateV2, DerEncoder.ConstructSequence(essCertIDv2));
 
             // Create an attribute
             return new CryptographicAttributeObject(
                 oid: new Oid(Oids.SigningCertificateV2),
-                values: new AsnEncodedDataCollection(null));
+                values: new AsnEncodedDataCollection(data));
+        }
+
+        public static bool IsSameCertificate(X509Certificate2 cert, CryptographicAttributeObject certAttribute)
+        {
+            var essCertIDv2 = certAttribute.Values.ToList();
+
+            if (essCertIDv2.Count > 1)
+            {
+                var hashAlgorithm = CryptoHashUtility.OidToHashAlgorithmName(essCertIDv2[0].Oid.Value);
+                var hashValue = GetCertificateHash(cert, hashAlgorithm);
+                var attributeHashValue = essCertIDv2[0].RawData;
+
+                return hashValue.SequenceEqual(attributeHashValue);
+            }
+
+            return false;
+        }
+
+        private static List<AsnEncodedData> ToList(this AsnEncodedDataCollection collection)
+        {
+            var values = new List<AsnEncodedData>();
+
+            foreach (var value in collection)
+            {
+                values.Add(value);
+            }
+
+            return values;
+        }
+
+        private static byte[] GetCertificateHash(X509Certificate2 cert, Common.HashAlgorithmName hashAlgorithm)
+        {
+            return hashAlgorithm.GetHashProvider().ComputeHash(cert.RawData);
+        }
+
+        /// <summary>
+        /// Hex string -> big endian byte array
+        /// </summary>
+        public static byte[] GetSerialNumberBytes(string serialNumber)
+        {
+            var count = serialNumber.Length;
+            var bytes = new byte[count / 2];
+
+            for (var i = 0; i < count; i += 2)
+            {
+                var pos = i / 2;
+                var value = Convert.ToByte(serialNumber.Substring(i, 2), 16);
+                bytes[pos] = value;
+            }
+
+            return bytes;
         }
 #endif
     }
