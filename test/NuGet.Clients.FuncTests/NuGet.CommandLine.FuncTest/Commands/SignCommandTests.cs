@@ -41,7 +41,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
             _timestamper = _testFixture.Timestamper;
         }
 
-        [Fact]
+        [CIOnlyFact]
         public void SignCommand_SignPackage()
         {
             // Arrange
@@ -73,7 +73,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
             }
         }
 
-        [Fact]
+        [CIOnlyFact]
         public void SignCommand_SignPackageWithInvalidEkuFails()
         {
             // Arrange
@@ -138,7 +138,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
             }
         }
 
-        [Fact]
+        [CIOnlyFact]
         public void SignCommand_SignPackageWithOutputDirectory()
         {
             // Arrange
@@ -174,7 +174,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
             }
         }
 
-        [Fact]
+        [CIOnlyFact]
         public void SignCommand_ResignPackageWithoutOverwriteFails()
         {
             // Arrange
@@ -215,7 +215,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
             }
         }
 
-        [Fact]
+        [CIOnlyFact]
         public void SignCommand_ResignPackageWithOverwriteSuccess()
         {
             // Arrange
@@ -256,7 +256,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
             }
         }
 
-        [Fact]
+        [CIOnlyFact]
         public void SignCommand_SignPackageWithPfxFileSuccess()
         {
             // Arrange
@@ -299,7 +299,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
         }
 
 
-        [Fact]
+        [CIOnlyFact]
         public void SignCommand_SignPackageWithPfxFileInteractiveSuccess()
         {
             // Arrange
@@ -345,7 +345,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
             }
         }
 
-        [Fact]
+        [CIOnlyFact]
         public void SignCommand_SignPackageWithPfxFileInteractiveInvalidPasswordFails()
         {
             // Arrange
@@ -391,7 +391,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
             }
         }
 
-        [Fact]
+        [CIOnlyFact]
         public void SignCommand_SignPackageWithPfxFileWithoutPasswordAndWithNonInteractiveFails()
         {
             // Arrange
@@ -433,7 +433,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
             }
         }
 
-        [Fact]
+        [CIOnlyFact]
         public void SignCommand_SignPackageWithPfxFileWithNonInteractiveAndStdInPasswordFails()
         {
             // Arrange

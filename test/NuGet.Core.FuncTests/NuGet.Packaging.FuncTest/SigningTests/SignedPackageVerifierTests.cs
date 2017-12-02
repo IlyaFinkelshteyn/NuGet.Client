@@ -39,7 +39,7 @@ namespace NuGet.Packaging.FuncTest
             _trustProviders = _testFixture.TrustProviders;
         }
 
-        [Fact]
+        [CIOnlyFact]
         public async Task Signer_VerifyOnSignedPackageAsync()
         {
             // Arrange
@@ -62,7 +62,7 @@ namespace NuGet.Packaging.FuncTest
             }
         }
 
-        [Fact]
+        [CIOnlyFact]
         public async Task Signer_VerifyOnTamperedPackage_FileDeletedAsync()
         {
             // Arrange
@@ -99,7 +99,7 @@ namespace NuGet.Packaging.FuncTest
             }
         }
 
-        [Fact]
+        [CIOnlyFact]
         public async Task Signer_VerifyOnTamperedPackage_FileAddedAsync()
         {
             // Arrange
@@ -140,7 +140,7 @@ namespace NuGet.Packaging.FuncTest
             }
         }
 
-        [Fact]
+        [CIOnlyFact]
         public async Task Signer_VerifyOnTamperedPackage_FileAppendedAsync()
         {
             // Arrange
@@ -181,7 +181,7 @@ namespace NuGet.Packaging.FuncTest
             }
         }
 
-        [Fact]
+        [CIOnlyFact]
         public async Task Signer_VerifyOnTamperedPackage_FileTruncatedAsync()
         {
             // Arrange
@@ -219,7 +219,7 @@ namespace NuGet.Packaging.FuncTest
             }
         }
 
-        [Fact]
+        [CIOnlyFact]
         public async Task Signer_VerifyOnTamperedPackage_FileMetadataModifiedAsync()
         {
             // Arrange
@@ -260,7 +260,7 @@ namespace NuGet.Packaging.FuncTest
             }
         }
 
-        [Fact]
+        [CIOnlyFact]
         public async Task Signer_VerifyOnTamperedPackage_SignatureRemovedAsync()
         {
             // Arrange
@@ -298,7 +298,7 @@ namespace NuGet.Packaging.FuncTest
             }
         }
 
-        [Fact]
+        [CIOnlyFact]
         public async Task Signer_VerifyOnTamperedPackage_SignatureMetadataModifiedAsync()
         {
             // Arrange
@@ -334,7 +334,7 @@ namespace NuGet.Packaging.FuncTest
             }
         }
 
-        [Fact]
+        [CIOnlyFact]
         public async Task Signer_VerifyOnTamperedPackage_SignatureTruncatedAsync()
         {
             // Arrange
