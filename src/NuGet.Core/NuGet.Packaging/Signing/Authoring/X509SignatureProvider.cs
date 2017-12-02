@@ -76,6 +76,7 @@ namespace NuGet.Packaging.Signing
                     new AsnEncodedDataCollection(signingTime)));
 
             cmsSigner.IncludeOption = X509IncludeOption.WholeChain;
+            cmsSigner.DigestAlgorithm = cert.SignatureAlgorithm;
 
             var cms = new SignedCms(contentInfo);
 
