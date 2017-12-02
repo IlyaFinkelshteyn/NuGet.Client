@@ -28,7 +28,7 @@ namespace NuGet.Packaging.FuncTest
                 {
                     Action<X509V3CertificateGenerator> actionGenerator = delegate (X509V3CertificateGenerator gen)
                     {
-                        // any EKU besides
+                        // CodeSigning EKU
                         var usages = new[] { KeyPurposeID.IdKPCodeSigning };
 
                         gen.AddExtension(
@@ -40,7 +40,7 @@ namespace NuGet.Packaging.FuncTest
                     // Code Sign EKU needs trust to a root authority
                     // Add the cert to Root CA list in LocalMachine as it does not prompt a dialog
                     // This makes all the associated tests to require admin privilege
-                    _trustedTestCert = TestCertificate.Generate(actionGenerator).WithPrivateKeyAndTrust(StoreName.Root, StoreLocation.LocalMachine);
+                    _trustedTestCert = TestCertificate.Generate(actionGenerator).WithTrust(StoreName.Root, StoreLocation.LocalMachine);
                 }
 
                 return _trustedTestCert;

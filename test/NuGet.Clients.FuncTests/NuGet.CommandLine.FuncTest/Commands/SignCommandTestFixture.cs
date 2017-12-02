@@ -34,7 +34,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 {
                     Action<X509V3CertificateGenerator> actionGenerator = delegate (X509V3CertificateGenerator gen)
                     {
-                        // any EKU besides
+                        // CodeSigning EKU
                         var usages = new[] { KeyPurposeID.IdKPCodeSigning };
 
                         gen.AddExtension(
